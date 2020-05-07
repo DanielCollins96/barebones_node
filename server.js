@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 
 app.use((req, res, next) => {
+    res.locals.user = req.session.user;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
@@ -43,6 +44,7 @@ app.post('/login', (req, res) => {
             console.log(user)
             if (req.body.username == user.username && req.body.password == user.password) {
                 req.session.Authenticated = true;
+                req.session.user = req.body.username;
                 return res.render('profile', {Authenticated: req.session.Authenticated});
             }
         }
