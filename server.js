@@ -41,7 +41,9 @@ app.get('/login', (req, res) => {
 app.post('/login', async (req, res) => {
     console.log(users.length)
     password = req.body.password;
+    console.log(password)
     for (let user of users) {
+        console.log(user.password)
         let match = await bcrypt.compare(password, user.password);
         if (match) {
             console.log('logged in')
