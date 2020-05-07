@@ -38,33 +38,23 @@ app.get('/login', (req, res) => {
     res.render('login', {Authenticated: req.session.Authenticated})
 })
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     console.log(users.length)
     password = req.body.password;
     for (let user of users) {
-        console.log('hi')
-            bcrypt.compare(password, user.password)
-                .then(match => {
-                    console.log('matched')
-                    if (match) {
-                        console.log('logged in')
-                        req.session.Authenticated = true;
-                        req.session.user = req.body.username;
-                        return res.redirect('/profile');
-                    } else {
-
-                        req.flash('error_msg', 'Username or Password incorrect');
-                        return res.redirect('/login')
-                    }        
-                })
-                .catch(error => console.log('error' + error))
-            
-    }
-    console.log('2 time?')
+        let match = await bcrypt.compare(password, user.password);
+        if (match) {
+            console.log('logged in')
+            req.session.Authenticated = true;
+            req.session.user = req.body.username;
+            return res.redirect('/profile');
+        } 
+    }    
     req.flash('error_msg', 'Username or Password incorrect');
     res.redirect('/login')
     // res.render('login', {Authenticated: req.session.Authenticated})
 })
+
 
 app.get('/register', (req, res) => {
     res.render('register', {Authenticated: req.Authenticated})
@@ -75,7 +65,6 @@ app.post('/register', async (req, res) => {
         if (req.body.username == user.username) {
             req.flash('error_msg', 'Username already exists');
             return res.redirect('/register')
-            // return res.render('register', {Authenticated: req.session.Authenticated})
         }
     }
     let hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -84,7 +73,6 @@ app.post('/register', async (req, res) => {
         password: hashedPassword
     }
     users.push(user)
-    console.log('rererererere')
     req.flash('success_msg', 'You are now registered and can log in');
     res.redirect('login');
     // res.render('login', {Authenticated: req.session.Authenticated})
