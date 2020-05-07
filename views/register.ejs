@@ -6,10 +6,8 @@
     <title>Document</title>
 </head>
 <body>
-    <% if(error) { %>
-        <p><%= error %></p>
-    <% } %>
     <%- include('./includes/navigation.ejs') %>
+    <%- include('./includes/messages.ejs') %>
     <form action="/register" method="POST">
         <fieldset>
             <legend>Register</legend>
