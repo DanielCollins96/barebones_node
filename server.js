@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.render('login', {error: false, Authenticated: req.session.Authenticated})
+    res.render('login', {Authenticated: req.session.Authenticated})
 })
 
 app.post('/login', (req, res) => {
@@ -47,11 +47,12 @@ app.post('/login', (req, res) => {
             }
         }
     }
-    res.render('login', {error: "Username or Password incorrect", Authenticated: req.session.Authenticated})
+    req.flash('error_msg', 'Username or Password incorrect');
+    res.render('login', {Authenticated: req.session.Authenticated})
 })
 
 app.get('/register', (req, res) => {
-    res.render('register', {Authenticated: req.Authenticated, error: false})
+    res.render('register', {Authenticated: req.Authenticated})
 })
 
 app.post('/register', (req, res) => {
@@ -63,10 +64,7 @@ app.post('/register', (req, res) => {
         password: req.body.password
     }
     users.push(user)
-    req.flash(
-        'success_msg',
-        'You are now registered and can log in'
-      );
+    req.flash('success_msg', 'You are now registered and can log in');
     res.redirect('/login')
 })
 
