@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% if(error) { %>
+        <p><%= error %></p>
+    <% } %>
+    <%- include('./includes/navigation.ejs') %>
+    <form action="/register" method="POST">
+        <fieldset>
+            <legend>Register</legend>
+            <p>
+                <label for="username">Username</label>
+                <input name="username" type="text" placeholder="username" required>
+            </p>
+            <p>
+                <label for="password">Password</label>
+                <input name="password" type="password" placeholder="password" required>
+            </p>
+            <button type="submit">Submit</button>
+        </fieldset>
+    </form>
+</body>
+</html>
