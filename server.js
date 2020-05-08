@@ -67,10 +67,11 @@ app.post('/login', async (req, res) => {
         }
         let match = await bcrypt.compare(password, user.password);
         if (match) {
-            console.log(user._id);
-            console.log('logged in')
+            // console.log(user._id);
+            // console.log('logged in')
             req.session.Authenticated = true;
             req.session.user = email;
+            req.session.id = user._id;
             return res.redirect('/profile');
         }
         req.flash('error_msg', 'Username or Password incorrect');
@@ -106,9 +107,16 @@ app.post('/register', async (req, res) => {
     })
 })
 
-app.get('/profile', (req, res) => {
+app.get('/profile', async (req, res) => {
     if (req.session.Authenticated) {
-        return res.render('profile', {Authenticated: req.session.Authenticated})
+        console.log(req.session.id)
+        let userPosts = await Post.find({postedBy: req.session.id})
+        // let user = await User.findOne({
+        //     email: req.session.user
+        // })
+        // let userPosts = user.populate({ path: 'posts'});
+        console.log(userPosts)
+        return res.render('profile', {Authenticated: req.session.Authenticated, posts: userPosts})
     }
     req.flash('error_msg', 'Login to see your profile')
     res.redirect('/login')
