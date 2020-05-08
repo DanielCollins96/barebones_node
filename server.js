@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 
 //Mongoose User Schema
 let User = require('./models/user');
+let Post = require('./models/post');
 
 
 let app = express();
@@ -66,6 +67,7 @@ app.post('/login', async (req, res) => {
         }
         let match = await bcrypt.compare(password, user.password);
         if (match) {
+            console.log(user._id);
             console.log('logged in')
             req.session.Authenticated = true;
             req.session.user = email;
@@ -110,6 +112,25 @@ app.get('/profile', (req, res) => {
     }
     req.flash('error_msg', 'Login to see your profile')
     res.redirect('/login')
+})
+
+app.post('/profile/create-post', (req, res) => {
+    let {title, comment} = req.body;
+    User.findOne({
+        email: req.session.user
+    })
+    .then(user => {
+        let newPost = new Post({
+            title,
+            comment,
+            postedBy: user._id
+        })
+        newPost.save()
+        .then(u => {
+            req.flash('success_msg', 'Successfully Posted')
+            res.redirect('/profile')
+        })
+    })
 })
 
 app.get('/logout', (req, res) => {

@@ -9,21 +9,24 @@
 <body>
     <%- include('./includes/navigation.ejs') %>
     <%- include('./includes/messages.ejs') %>
+    <div class="container">
     <h2>Hello this is a profile for <%- locals.user %></h2>
-    <form action="/profile/create-post" method="POST">
-        <p>
-            <label for="title">Title</label>
-            <input name="title" placeholder="Title">
-        </p>
-        <p>
-            <label for="comment">Comment</label>
-            <textarea name="comment" rows="4" cols="50"></textarea>
-        </p>
-        <p>
-            <input type="submit" value="Post"> 
-        </p>
 
-    </form>
-    
+        <form action="/profile/create-post" method="POST">
+            <p>
+                <label for="title">Title</label>
+                <input name="title" placeholder="Title" required>
+            </p>
+            <p>
+                <label for="comment">Comment</label>
+                <textarea name="comment" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <input type="submit" value="Post"> 
+            </p>
+            
+        </form>
+        
+    </div>
 </body>
 </html>
