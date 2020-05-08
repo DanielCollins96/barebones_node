@@ -20,7 +20,9 @@ app.set('view engine', 'ejs');
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {maxAge: 1800000}
+    // cookie: {maxAge: 120000}
 }))
 
 mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
@@ -71,7 +73,7 @@ app.post('/login', async (req, res) => {
             // console.log('logged in')
             req.session.Authenticated = true;
             req.session.user = email;
-            req.session.id = user._id;
+            req.session.name = user.name;
             return res.redirect('/profile');
         }
         req.flash('error_msg', 'Username or Password incorrect');
@@ -109,13 +111,20 @@ app.post('/register', async (req, res) => {
 
 app.get('/profile', async (req, res) => {
     if (req.session.Authenticated) {
-        console.log(req.session.id)
-        let userPosts = await Post.find({postedBy: req.session.id})
+        let userPosts;
+        // console.log(req.session)
+        let postQuery = await Post.find({name: req.session.user}).lean().limit(5).exec((err, p) => {
+            if (err) console.log(err);
+            console.log(p)
+            // userPosts = JSON.stringify(p);
+            userPosts = p;
+        })
+        // let userPosts = await Post.find({postedBy: req.session.id})
         // let user = await User.findOne({
         //     email: req.session.user
         // })
         // let userPosts = user.populate({ path: 'posts'});
-        console.log(userPosts)
+        // console.log(userPosts)
         return res.render('profile', {Authenticated: req.session.Authenticated, posts: userPosts})
     }
     req.flash('error_msg', 'Login to see your profile')
@@ -124,22 +133,44 @@ app.get('/profile', async (req, res) => {
 
 app.post('/profile/create-post', (req, res) => {
     let {title, comment} = req.body;
-    User.findOne({
-        email: req.session.user
+    let name = req.session.user;
+    let newPost = new Post({
+        title,
+        comment,
+        name: name
     })
-    .then(user => {
-        let newPost = new Post({
-            title,
-            comment,
-            postedBy: user._id
-        })
-        newPost.save()
-        .then(u => {
-            req.flash('success_msg', 'Successfully Posted')
-            res.redirect('/profile')
-        })
+    newPost.save((err, doc) => {
+        if (err) {
+            req.flash('error_msg', 'Error attempting to post');
+            res.redirect('/profile');
+        } else {
+            req.flash('success_msg', 'Successfully Posted');
+            res.redirect('/profile');
+        }
     })
-})
+    })
+    // User.findOne({
+    //     email: req.session.user
+    // })
+    // .then(user => {
+    //     let newPost = new Post({
+    //         title,
+    //         comment,
+    //         name: name
+    //     })
+    //     newPost.save()
+    //     .then((err) => {
+    //         console.log(err)
+    //         if (err) {
+    //             req.flash('error_msg', 'Error attempting to post');
+    //             res.redirect('/profile');
+    //         } else {
+    //             req.flash('success_msg', 'Successfully Posted');
+    //             res.redirect('/profile');
+    //         }
+    //     })
+    // })
+
 
 app.get('/logout', (req, res) => {
     // req.flash('success_msg', 'logging out');
@@ -148,5 +179,5 @@ app.get('/logout', (req, res) => {
 })
 
 app.listen(3000, () => {
-    console.log('Listening')
+    console.log('Express Listening')
 })

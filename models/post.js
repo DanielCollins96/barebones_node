@@ -9,12 +9,15 @@ let postSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    postedBy: {
-        id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        }
+    name: {
+        type: String
     },
+    // postedBy: {
+    //     id: {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'User'
+    //     }
+    // },
     date: {
         type: Date,
         default: Date.now
