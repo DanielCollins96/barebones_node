@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
     <%- include('./includes/navigation.ejs') %>
@@ -11,13 +12,17 @@
     <form action="/login" method="POST">
         <fieldset>
             <legend>Login</legend>
-            <p>
+            <!-- <p>
                 <label for="username">Username</label>
                 <input name="username" type="text" placeholder="username" required>
+            </p> -->
+            <p>
+                <label for="email">Email</label>
+                <input name="email" type="email" placeholder="Email" required>
             </p>
             <p>
                 <label for="password">Password</label>
-                <input name="password" type="password" placeholder="password" required>
+                <input name="password" type="password" placeholder="Password" required>
             </p>
             <button type="submit">Submit</button>
         </fieldset>

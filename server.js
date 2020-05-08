@@ -1,13 +1,17 @@
 const express = require('express');
 const path = require('path');
+require('dotenv').config();
+const morgan = require('morgan');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
 
-let app = express();
+//Mongoose User Schema
+let User = require('./models/user');
 
-var users = [];
+
+let app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -18,8 +22,20 @@ app.use(session({
     saveUninitialized: true
 }))
 
+mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
+const db = mongoose.connection;
+
+db.once('open', () => {
+    console.log('Connected')
+})
+db.on('error', (err) => {
+    console.log('error' + err)
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(morgan('dev'));
 
 app.use(flash());
 
@@ -40,23 +56,26 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', async (req, res) => {
-    console.log(users.length)
-    password = req.body.password;
-    console.log(password)
-    for (let user of users) {
-        console.log(user.password)
+    let {email, password} = req.body;
+    User.findOne({
+        email: email
+    }).then(async (user) => {
+        if(!user) {
+            req.flash('error_msg', 'Email not registered');
+            return res.redirect('/login');
+        }
         let match = await bcrypt.compare(password, user.password);
         if (match) {
             console.log('logged in')
             req.session.Authenticated = true;
-            req.session.user = req.body.username;
+            req.session.user = email;
             return res.redirect('/profile');
-        } 
-    }    
-    req.flash('error_msg', 'Username or Password incorrect');
-    res.redirect('/login')
-    // res.render('login', {Authenticated: req.session.Authenticated})
-})
+        }
+        req.flash('error_msg', 'Username or Password incorrect');
+        res.redirect('/login')
+        // res.render('login', {Authenticated: req.session.Authenticated})
+    }) 
+    })    
 
 
 app.get('/register', (req, res) => {
@@ -64,21 +83,25 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
-    for (let user of users) {
-        if (req.body.username == user.username) {
-            req.flash('error_msg', 'Username already exists');
-            return res.redirect('/register')
-        }
-    }
-    let hashedPassword = await bcrypt.hash(req.body.password, 10);
-    let user = {
-        username: req.body.username,
+    let {username, email, password} = req.body;
+    console.log(email)
+    let user = await User.findOne({ email: email });
+    if (user) {
+        req.flash('error_msg', 'User with this email already exists');
+        return res.redirect('/register')
+    }  
+    let hashedPassword = await bcrypt.hash(password, 10);
+    let newUser = new User({
+        name: username,
+        email,
         password: hashedPassword
-    }
-    users.push(user)
-    req.flash('success_msg', 'You are now registered and can log in');
-    res.redirect('login');
-    // res.render('login', {Authenticated: req.session.Authenticated})
+    })
+    newUser.save()
+    .then(u => {
+        req.flash('success_msg', 'You are now registered and can log in');
+        res.redirect('login');
+        // res.render('login', {Authenticated: req.session.Authenticated};
+    })
 })
 
 app.get('/profile', (req, res) => {
@@ -86,7 +109,7 @@ app.get('/profile', (req, res) => {
         return res.render('profile', {Authenticated: req.session.Authenticated})
     }
     req.flash('error_msg', 'Login to see your profile')
-    res.render('login', {Authenticated: req.session.Authenticated})
+    res.redirect('/login')
 })
 
 app.get('/logout', (req, res) => {
