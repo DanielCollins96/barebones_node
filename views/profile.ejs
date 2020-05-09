@@ -24,7 +24,9 @@
         <% if (posts) { %>
         <% posts.forEach(post => { %>
             <div>
-                <h3>Post</h3>
+                <h3><%= post.title %></h3>
+                <p><%= post.comment %></p>
+                <p><%= post.date.toString().substring(0, 24) %></p>
             </div>
 
         <% }) %>

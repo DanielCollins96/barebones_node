@@ -9,8 +9,10 @@ let postSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    name: {
-        type: String
+    author: {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true
     },
     // postedBy: {
     //     id: {

@@ -43,11 +43,19 @@ app.use(morgan('dev'));
 app.use(flash());
 
 app.use((req, res, next) => {
-    res.locals.user = req.session.user;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
     next();
+})
+
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+    console.log(req.session.user.name)
+    res.locals.username = req.session.user.name;
+    next()
 })
 
 app.get('/', (req, res) => {
@@ -72,8 +80,7 @@ app.post('/login', async (req, res) => {
             // console.log(user._id);
             // console.log('logged in')
             req.session.Authenticated = true;
-            req.session.user = email;
-            req.session.name = user.name;
+            req.session.user = user;
             return res.redirect('/profile');
         }
         req.flash('error_msg', 'Username or Password incorrect');
@@ -111,24 +118,23 @@ app.post('/register', async (req, res) => {
 
 app.get('/profile', async (req, res) => {
     if (req.session.Authenticated) {
+        console.log(req.session.user._id)
         let userPosts;
         // console.log(req.session)
-        let postQuery = await Post.find({name: req.session.user}).lean().limit(5).exec((err, p) => {
-            if (err) console.log(err);
-            console.log(p)
-            // userPosts = JSON.stringify(p);
-            userPosts = p;
+        // let postQuery = await Post.find({author: req.session.user._id}).limit(5).exec((err, p) => {
+        Post.find({author: req.session.user._id}).limit(5).exec((err, post) => {
+            if (err) {
+                console.log(err);
+                req.flash('error_msg', 'Error loading posts');
+            }
+            userPosts = post;
+            console.log(userPosts)
+            return res.render('profile', {Authenticated: req.session.Authenticated, posts: userPosts})
         })
-        // let userPosts = await Post.find({postedBy: req.session.id})
-        // let user = await User.findOne({
-        //     email: req.session.user
-        // })
-        // let userPosts = user.populate({ path: 'posts'});
-        // console.log(userPosts)
-        return res.render('profile', {Authenticated: req.session.Authenticated, posts: userPosts})
+    } else {
+        req.flash('error_msg', 'Login to see your profile')
+        res.redirect('/login')
     }
-    req.flash('error_msg', 'Login to see your profile')
-    res.redirect('/login')
 })
 
 app.post('/profile/create-post', (req, res) => {
@@ -137,7 +143,7 @@ app.post('/profile/create-post', (req, res) => {
     let newPost = new Post({
         title,
         comment,
-        name: name
+        author: name
     })
     newPost.save((err, doc) => {
         if (err) {

@@ -13,7 +13,12 @@ let userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    resetToken: String,
+    resetTokenExpiration: Date
+    // posts: {
+    //     type
+    // }
 });
 
 let User = module.exports = mongoose.model('User', userSchema);
