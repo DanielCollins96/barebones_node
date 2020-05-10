@@ -1,14 +1,15 @@
 const express = require('express');
 const path = require('path');
 require('dotenv').config();
-const morgan = require('morgan');
+const logger = require('morgan');
 const session = require('express-session');
-const bcrypt = require('bcryptjs');
+const MongoDBStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 
-//Mongoose User Schema
+//Mongoose Schemas
 let User = require('./models/user');
 let Post = require('./models/post');
 
@@ -20,13 +21,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {maxAge: 1800000}
-    // cookie: {maxAge: 120000}
-}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
@@ -38,10 +34,20 @@ db.on('error', (err) => {
     console.log('error: ' + err)
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoDBStore({mongooseConnection: mongoose.connection, ttl: 3600}),
+    cookie: {maxAge: 1800000}
+    // cookie: {maxAge: 120000}
+}))
 
-app.use(morgan('dev'));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.use(logger('dev'));
 
 app.use(flash());
 
@@ -62,6 +68,8 @@ app.use((req, res, next) => {
 })
 
 app.use('/', require('./routes/index.js'));
+
+// app.use('/profile')
 
 app.post('/profile/create-post', (req, res) => {
     let {title, comment} = req.body;
