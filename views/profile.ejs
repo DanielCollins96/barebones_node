@@ -4,34 +4,40 @@
     <%- include('./includes/navigation.ejs') %>
     <%- include('./includes/messages.ejs') %>
     <div class="container">
-    <h2>Hello this is a profile for: <%- locals.user %></h2>
+    <div class="page-header m-1">
+        <h2 style="text-align: center">Hello this is a profile for: <%- locals.username %></h2>
+    </div>
 
-        <form action="/profile/create-post" method="POST">
-            <p>
-                <label for="title">Title</label>
-                <input name="title" placeholder="Title" required>
-            </p>
-            <p>
-                <label for="comment">Comment</label>
-                <textarea name="comment" rows="4" cols="50" required></textarea>
-            </p>
-            <p>
-                <input type="submit" value="Post"> 
-            </p>
+        <form class="form-row m-3" action="/profile/create-post" method="POST">
+            <div class="form-group p-3 border rounded">
+
+                <p>
+                    <label for="title">Title</label>
+                    <input class="form-control" name="title" placeholder="Title" required>
+                </p>
+                <p>
+                    <label for="comment">Comment</label>
+                    <div class="row justify-content-center m-1">
+                        <textarea class="form-control" name="comment" rows="4" cols="50" required></textarea>
+                    </div>
+                </p>
+                <div class="row justify-content-center">
+                    <button class="btn btn-outline-dark" type="submit">Submit</button>
+                </div>
+            </div>
             
         </form>
         <hr>
         <% if (posts) { %>
         <% posts.forEach(post => { %>
-            <div class="card">
+            <div class="card p-3 m-1">
                 <h3 class="card-title"><%= post.title %></h3>
                 <p class="card-text"><%= post.comment %></p>
-                <p><%= post.date.toString().substring(0, 24) %></p>
+                <p><%= post.date.toString().substring(4, 24) %></p>
             </div>
 
         <% }) %>
         <% } else { %>
-
             <p>No Posts</p>
         <% } %>
     </div>

@@ -3,8 +3,8 @@
 <body>
     <%- include('./includes/navigation.ejs') %>
     <%- include('./includes/messages.ejs') %>
-    <form action="/login" method="POST">
-        <div class="form-group">
+    <form class="form-row m-3" action="/login" method="POST">
+        <div class="form-group p-3 border rounded">
             <legend>Login</legend>
             <!-- <p>
                 <label for="username">Username</label>
@@ -12,13 +12,15 @@
             </p> -->
             <p>
                 <label for="email">Email</label>
-                <input name="email" type="email" placeholder="Email" required>
+                <input class="form-control" name="email" type="email" placeholder="Email" required>
             </p>
             <p>
                 <label for="password">Password</label>
-                <input name="password" type="password" placeholder="Password" required>
+                <input class="form-control" name="password" type="password" placeholder="Password" required>
             </p>
-            <button type="submit">Submit</button>
+            <div class="row justify-content-center">
+                <button class="btn btn-outline-dark" type="submit">Submit</button>
+            </div>
         </div>
     </form>
 </body>

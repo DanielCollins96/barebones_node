@@ -1,3 +1,28 @@
-html {
-    margin: 10px;
+.navbar-collapse {
+    text-align: center;
+}
+
+#main-chart {
+    width: 50%;
+    text-align: center;
+}
+
+#myChart {
+    display: inline;
+}
+
+
+/* login */
+
+legend {
+    text-align: center;
+}
+
+.form-row {
+    margin: 0;
+    justify-content: center;
+}
+
+.form-group {
+    width: 400px;
 }

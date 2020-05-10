@@ -1,26 +1,29 @@
 <%- include('./includes/head.ejs') %>
 </head>
 <body>
-    <%- include('./includes/head.ejs') %>
     <%- include('./includes/navigation.ejs') %>
     <%- include('./includes/messages.ejs') %>
-    <form action="/register" method="POST">
-        <fieldset>
-            <legend>Register</legend>
-            <p>
-                <label for="username">Username</label>
-                <input name="username" type="text" placeholder="username" required>
-            </p>
-            <p>
-                <label for="email">Email</label>
-                <input name="email" type="email" placeholder="Email" required>
-            </p>
-            <p>
-                <label for="password">Password</label>
-                <input name="password" type="password" placeholder="password" required>
-            </p>
-            <button type="submit">Submit</button>
-        </fieldset>
-    </form>
+    <div id="main">
+        <form class="form-row m-3" action="/register" method="POST">
+            <div class="form-group p-3 border rounded">
+                <legend>Register</legend>
+                <p>
+                    <label for="username">Username</label>
+                    <input class="form-control" name="username" type="text" placeholder="username" required>
+                </p>
+                <p>
+                    <label for="email">Email</label>
+                    <input class="form-control" name="email" type="email" placeholder="Email" required>
+                </p>
+                <p>
+                    <label for="password">Password</label>
+                    <input class="form-control" name="password" type="password" placeholder="password" required>
+                </p>
+                <div class="row justify-content-center">
+                    <button class="btn btn-outline-dark" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

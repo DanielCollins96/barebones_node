@@ -34,7 +34,7 @@ db.once('open', () => {
     console.log('Connected')
 })
 db.on('error', (err) => {
-    console.log('error' + err)
+    console.log('error: ' + err)
 });
 
 app.use(express.json());
@@ -124,7 +124,7 @@ app.get('/profile', async (req, res) => {
         let userPosts;
         // console.log(req.session)
         // let postQuery = await Post.find({author: req.session.user._id}).limit(5).exec((err, p) => {
-        Post.find({author: req.session.user._id}).limit(5).exec((err, post) => {
+        Post.find({author: req.session.user._id}).limit(10).sort({date: -1}).exec((err, post) => {
             if (err) {
                 console.log(err);
                 req.flash('error_msg', 'Error loading posts');
