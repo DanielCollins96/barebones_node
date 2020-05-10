@@ -1,41 +1,41 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 const router = express.Router();
 
 //Mongoose User Schema
-let User = require('../models/user');
-let Post = require('../models/post');
+// let User = require('../models/user');
+// let Post = require('../models/post');
+
+
+
+
+
+
 
 router.get('/', (req, res) => {
     res.render('index', {Authenticated: req.session.Authenticated})   
 });
 
+// router.get('/login', (req, res) => {
+//     res.render('login', {Authenticated: req.session.Authenticated})
+// })
+
 router.get('/login', (req, res) => {
     res.render('login', {Authenticated: req.session.Authenticated})
 })
 
-router.post('/login', async (req, res) => {
-    let {email, password} = req.body;
-    User.findOne({
-        email: email
-    }).then(async (user) => {
-        if(!user) {
-            req.flash('error_msg', 'Email not registered');
-            return res.redirect('/login');
-        }
-        let match = await bcrypt.compare(password, user.password);
-        if (match) {
-            // console.log(user._id);
-            // console.log('logged in')
-            req.session.Authenticated = true;
-            req.session.user = user;
-            return res.redirect('/profile');
-        }
-        req.flash('error_msg', 'Username or Password incorrect');
-        res.redirect('/login')
-        // res.render('login', {Authenticated: req.session.Authenticated})
-    }) 
-    })    
+// let mids = (req, res, next) => {
+//     console.log(req);
+//     next();
+// }
+
+router.post('/login', passport.authenticate('local', {
+        successRedirect: '/profile',
+        failureRedirect: '/login',
+        failureFlash: true
+    }))
+      
 
 
 router.get('/register', (req, res) => {
@@ -65,19 +65,21 @@ router.post('/register', async (req, res) => {
 })
 
 router.get('/profile', async (req, res) => {
-    if (req.session.Authenticated) {
-        console.log(req.session.user._id)
+    console.log(req.user)
+    let auth = req.isAuthenticated();
+    if (auth) {
+        console.log(req.user._id)
         let userPosts;
         // console.log(req.session)
         // let postQuery = await Post.find({author: req.session.user._id}).limit(5).exec((err, p) => {
-        Post.find({author: req.session.user._id}).limit(10).sort({date: -1}).exec((err, post) => {
+        Post.find({author: req.user._id}).limit(10).sort({date: -1}).exec((err, post) => {
             if (err) {
                 console.log(err);
                 req.flash('error_msg', 'Error loading posts');
             }
             userPosts = post;
             console.log(userPosts)
-            return res.render('profile', {Authenticated: req.session.Authenticated, posts: userPosts})
+            return res.render('profile', {Authenticated: auth, posts: userPosts})
         })
     } else {
         req.flash('error_msg', 'Login to see your profile')
@@ -86,9 +88,9 @@ router.get('/profile', async (req, res) => {
 })
 
 router.get('/logout', (req, res) => {
-    // req.flash('success_msg', 'logging out');
-    req.session.destroy();
-    res.redirect('/');
+    req.logout();
+    req.flash('success_msg', 'You are logged out');
+    res.redirect('/login');
 })
 
 module.exports = router;

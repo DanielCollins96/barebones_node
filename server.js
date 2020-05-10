@@ -7,12 +7,13 @@ const MongoDBStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const passport = require('passport');
+require('./config/passport')(passport);
 const helmet = require('helmet')
 
 
 //Mongoose Schemas
-let User = require('./models/user');
-let Post = require('./models/post');
+User = require('./models/user');
+Post = require('./models/post');
 
 
 let app = express();
@@ -53,29 +54,30 @@ app.use(flash());
 
 app.use(logger('dev'));
 
-app.use((req, res, next) => {
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    next();
-});
+// app.use((req, res, next) => {
+//     res.locals.success_msg = req.flash('success_msg');
+//     res.locals.error_msg = req.flash('error_msg');
+//     res.locals.error = req.flash('error');
+//     next();
+// });
 
-app.use((req, res, next) => {
-    if (!req.session.user) {
-        return next();
-    }
-    console.log(req.session.user.name)
-    res.locals.username = req.session.user.name;
-    next()
-});
+// app.use((req, res, next) => {
+//     if (!req.session.user) {
+//         return next();
+//     }
+//     console.log(req.session.user.name)
+//     res.locals.username = req.session.user.name;
+//     next()
+// });
 
-app.use('/', require('./routes/index.js'));
+app.use('/', require('./routes/home.js'));
 
 // app.use('/profile')
 
 app.post('/profile/create-post', (req, res) => {
+    console.log(req.user._id)
     let {title, comment} = req.body;
-    let name = req.session.user;
+    let name = req.user._id;
     let newPost = new Post({
         title,
         comment,
@@ -84,7 +86,7 @@ app.post('/profile/create-post', (req, res) => {
     newPost.save((err, doc) => {
         if (err) {
             req.flash('error_msg', 'Error attempting to post');
-            res.redirect('/profile');
+            res.redirect('/profilessss');
         } else {
             req.flash('success_msg', 'Successfully Posted');
             res.redirect('/profile');

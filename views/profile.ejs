@@ -2,7 +2,6 @@
 </head>
 <body>
     <%- include('./includes/navigation.ejs') %>
-    <%- include('./includes/messages.ejs') %>
     <div class="container">
     <div class="page-header m-1">
         <h2 style="text-align: center">Hello this is a profile for: <%- locals.username %></h2>
@@ -33,18 +32,18 @@
         </div>    
     </form>
     <hr>
-    <% if (posts) { %>
-    <% posts.forEach(post => { %>
-        <div class="card p-3 m-1">
-            <h3 class="card-title"><%= post.title %></h3>
-            <p class="card-text"><%= post.comment %></p>
-            <p><%= post.date.toString().substring(4, 24) %></p>
-        </div>
+        <% if (posts) { %>
+        <% posts.forEach(post => { %>
+            <div class="card p-3 m-1">
+                <h3 class="card-title"><%= post.title %></h3>
+                <p class="card-text"><%= post.comment %></p>
+                <p><%= post.date.toString().substring(4, 24) %></p>
+            </div>
 
-    <% }) %>
-    <% } else { %>
-        <p>No Posts</p>
-    <% } %>
+        <% }) %>
+        <% } else { %>
+            <p>No Posts</p>
+        <% } %>
     </div>
 </body>
 </html>
