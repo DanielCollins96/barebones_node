@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const router = express.Router();
+const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
 
 //Mongoose User Schema
 // let User = require('../models/user');
@@ -14,26 +15,22 @@ const router = express.Router();
 
 
 router.get('/', (req, res) => {
-    res.render('index', {Authenticated: req.session.Authenticated})   
+    res.render('index', {Authenticated: req.isAuthenticated()})   
 });
 
-// router.get('/login', (req, res) => {
-//     res.render('login', {Authenticated: req.session.Authenticated})
-// })
 
 router.get('/login', (req, res) => {
-    res.render('login', {Authenticated: req.session.Authenticated})
+    res.render('login', {Authenticated: req.isAuthenticated()})
 })
 
-// let mids = (req, res, next) => {
-//     console.log(req);
-//     next();
-// }
 
 router.post('/login', passport.authenticate('local', {
         successRedirect: '/profile',
         failureRedirect: '/login',
-        failureFlash: true
+        // Hard coded a vague login error because passport docs ""are"" shit
+        failureFlash: 'Error Logging In'
+        // failureFlash: error_msg
+        // failureFlash: true
     }))
       
 
