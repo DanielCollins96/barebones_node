@@ -4,15 +4,25 @@ let userSchema = mongoose.Schema({
     // _id: mongoose.Schema.Types.ObjectId,
     name: {
         type: String,
-        required: true
+        // required: true
     },
     email: {
         type: String,
-        required: true
+        unique: true
+        // required: true
     },
-    password: {
-        type: String,
-        required: true
+    
+    local : {
+        password: {
+            type: String
+            // required: true
+        }
+    },
+    google: {
+        id: String,
+        token: String,
+        email: String,
+        name: String
     }
     // resetToken: String,
     // resetTokenExpiration: Date
