@@ -24,7 +24,10 @@ module.exports = (passport) => {
                     if (!user) { 
                         return done(null, false, { error_msg: 'That email is not registered' }) 
                     }
-                
+                    if (!user.local.confirmed) {
+                      return done(null, false, { error_msg: 'That email has not been confirmed' }) 
+
+                    }
                     bcrypt.compare(password, user.local.password, (err, isMatch) => {
                     if (err) throw err;
                     if(isMatch) {

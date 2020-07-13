@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 let userSchema = mongoose.Schema({
     // _id: mongoose.Schema.Types.ObjectId,
     name: {
-        type: String,
+        type: String
         // required: true
     },
     email: {
@@ -16,6 +16,14 @@ let userSchema = mongoose.Schema({
         password: {
             type: String
             // required: true
+        },
+        confirmed: {
+            type: Boolean,
+            default: false
+        },
+        confirmation_string: {
+            type: String,
+            unique: true
         }
     },
     google: {

@@ -1,12 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
-
-//Mongoose User Schema
-// let User = require('../models/user');
-// let Post = require('../models/post');
 
 
 
@@ -50,6 +47,7 @@ router.get('/register', (req, res) => {
 
 router.post('/register', async (req, res) => {
     let {username, email, password} = req.body;
+    const confirmationString = Math.random().toString(12).slice(-14) 
     console.log(email)
     let user = await User.findOne({ email: email });
     if (user) {
@@ -60,11 +58,33 @@ router.post('/register', async (req, res) => {
     let newUser = new User({
         name: username,
         email,
-        "local.password": hashedPassword
+        "local.password": hashedPassword,
+        "local.confirmation_string": confirmationString
     })
     newUser.save()
     .then(u => {
-        req.flash('success_msg', 'You are now registered and can log in');
+        const url = `http://localhost:3000/confirmation/${confirmationString}`
+        let testAccount = nodemailer.createTestAccount((err, testAccount) => {
+            console.log(email)
+            console.log('send')
+            const transporter = nodemailer.createTransport({
+                host: "smtp.ethereal.email",
+                port: 587,
+                secure: false,
+                auth:{
+                    user: testAccount.user,
+                    pass: testAccount.pass,
+                },
+            });
+            transporter.sendMail({
+                from: testAccount.user,
+                to: email,
+                subject: 'Confirm Email',
+                html: `Click this link to confirm your email address: <a href="${url}">${url}</a>`
+            })
+        });
+        req.flash('success_msg', 'Confirm your email to login.');
+
         res.redirect('login');
         // res.render('login', {Authenticated: req.session.Authenticated};
     })
@@ -90,6 +110,14 @@ router.get('/profile', async (req, res) => {
     } else {
         req.flash('error_msg', 'Login to see your profile')
         res.redirect('/login')
+    }
+})
+
+router.get('/confirmation/:token', async (req, res) => {
+    try {
+        await User.update({"local.confirmation_string": req.params.token}, {"local.confirmed": true})
+    } catch (e) {
+        console.log(e)
     }
 })
 
