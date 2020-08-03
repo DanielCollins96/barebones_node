@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 require('./config/passport')(passport);
 const helmet = require('helmet')
+// const next = require('next')
 
 
 //Mongoose Schemas
@@ -94,6 +95,6 @@ app.post('/profile/create-post', (req, res) => {
     })
     })
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log('Express Listening')
 });
