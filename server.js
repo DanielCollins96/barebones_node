@@ -19,10 +19,10 @@ Post = require('./models/post');
 
 let app = express();
 
-app.use(express.static(path.join(__dirname, 'public')))
+// app.use(express.static(path.join(__dirname, 'public')))
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -51,16 +51,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(flash());
+// app.use(flash());
 
 app.use(logger('dev'));
 
-app.use((req, res, next) => {
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    next();
-});
+// app.use((req, res, next) => {
+//     res.locals.success_msg = req.flash('success_msg');
+//     res.locals.error_msg = req.flash('error_msg');
+//     res.locals.error = req.flash('error');
+//     next();
+// });
 
 // app.use((req, res, next) => {
 //     if (!req.session.user) {

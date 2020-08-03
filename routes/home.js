@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, forwardAuthenticated } = require('../config/isAuth');
 
 
 
@@ -30,13 +30,7 @@ router.get('/auth/google/callback',
     res.redirect('/profile');
   });
 
-router.post('/login', passport.authenticate('local', {
-        successRedirect: '/profile',
-        failureRedirect: '/login',
-        // Hard coded a vague login error because passport docs ""are"" shit
-        failureFlash: 'Error Logging In'
-        // failureFlash: error_msg
-        // failureFlash: true
+router.post('/login', 
     }))
       
 
