@@ -30,8 +30,8 @@ router.get('/auth/google/callback',
     res.redirect('/profile');
   });
 
-router.post('/login', 
-    }))
+// router.post('/login', 
+//     }))
       
 
 
