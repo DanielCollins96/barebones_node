@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, BrowserRouter as Router,Switch, Redirect } from 'react-router-dom';
+import Navbar from './components/Navbar'
 
 import Home from './pages/Home';
 import './App.css';
@@ -22,6 +23,7 @@ function App() {
 
   return (
     <Router>
+      <Navbar />
         <Switch>
     <Route exact path="/">
       <Home />

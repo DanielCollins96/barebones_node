@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
+// const passport = require('passport');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 const { ensureAuthenticated, forwardAuthenticated } = require('../config/isAuth');
@@ -12,7 +12,7 @@ const { ensureAuthenticated, forwardAuthenticated } = require('../config/isAuth'
 
 
 router.get('/', (req, res) => {
-    res.render('index', {Authenticated: req.isAuthenticated()})   
+    res.render('index')   
 });
 
 
@@ -20,24 +20,7 @@ router.get('/login', (req, res) => {
     res.render('login', {Authenticated: req.isAuthenticated()})
 })
 
-router.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/profile');
-  });
-
-// router.post('/login', 
-//     }))
-      
-
-
-router.get('/register', (req, res) => {
-    res.render('register', {Authenticated: req.Authenticated})
-})
 
 router.post('/register', async (req, res) => {
     let {username, email, password} = req.body;

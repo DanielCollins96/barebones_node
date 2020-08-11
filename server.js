@@ -6,8 +6,8 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
-const passport = require('passport');
-require('./config/passport')(passport);
+// const passport = require('passport');
+// require('./config/passport')(passport);
 const helmet = require('helmet')
 // const next = require('next')
 
@@ -48,8 +48,8 @@ app.use(session({
     // cookie: {maxAge: 120000}
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // app.use(flash());
 
@@ -73,7 +73,6 @@ app.use(logger('dev'));
 
 app.use('/', require('./routes/home.js'));
 
-// app.use('/profile')
 
 app.post('/profile/create-post', (req, res) => {
     console.log(req.user._id)
